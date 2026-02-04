@@ -1,0 +1,19 @@
+[build-system]
+requires = ["flit_core >=3.2,<4"]
+build-backend = "flit_core.buildapi"
+
+[project]
+name = "survmetr"
+version = "0.1.0"
+description = "Advanced predictive metrics for survival analysis"
+readme = "README.md"
+requires-python = ">=3.8"
+authors = [{ name="Your Name" }]
+dependencies = [
+  "numpy>=2.0.2",
+  "scikit-learn>=1.5.2",
+  "scikit-survival>=0.23.1"
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
