@@ -4,6 +4,14 @@ from dataclasses import dataclass
 import numpy as np
 
 
+# # Antolini
+
+#__all? = [
+#    "concordance_index_antolini_scorer",
+#]
+
+# code from survhive.metrics
+
 import sksurv.metrics
 
 
@@ -34,3 +42,36 @@ def concordance_index_antolini_scorer(estimator, X, y, return_all=False):
     )
     return r if return_all else r[0]
     
+
+# # Basic simulation
+
+if False:
+    def generate_features(size, n, seed=None):
+        if seed is not None:
+            np.random.seed(seed)
+        X_sim = np.random.normal(size=(size, n))
+        return X_sim
+
+
+# # Other scores
+
+
+from sksurv.metrics import concordance_index_censored
+
+def harrel_c_index_scorer(mod, X, y):
+    # this works on sksurv Cox
+    preds = mod.predict(X)
+    return concordance_index_censored(
+        event_indicator=y['event'], 
+        event_time=y['time'],
+        estimate=preds,
+    )[0]
+
+
+
+from sklearn.metrics import roc_auc_score, brier_score_loss, log_loss
+def get_time(y):
+    return y['time']
+def get_indicator(y):
+    return y['event']
+
