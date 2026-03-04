@@ -1,36 +1,3 @@
-from sksurv.util import check_y_survival
-#event, time = check_array_survival(X, y)
-from dataclasses import dataclass
-import numpy as np
+from .antolini import c_index_antolini_vector as c_index_antolini
 
-
-import sksurv.metrics
-
-
-
-def concordance_index_antolini_scorer(estimator, X, y, return_all=False):
-    """Antolini's extension of concordance index to time-dependent predictions.
-
-    Implementation based on scikit-survival concordance_index_censored code.
-
-    Parameters:
-    - estimator: estimator object with a `predict_survival` method,
-    - X: feature matrix for the `predict_survival` method
-    - y: survival outcomes for evaluating the prediction
-    - return_all: bool, set to true to return more information on the score
-
-    Returns:
-    - the concordance score (float) if return_all is false or a tuple (score: float, concordant: int, discordant: int, tied_risk: int, tied_time: int). For more information see scikit-survival concordance_index_censored documentation.
-    """
-    
-    event, time = y['event'], y['time']
-    assert event.dtype == np.bool
-
-    r = _estimate_concordance_index_antolini(
-        event_indicator=event,
-        event_time=time,
-        estimate=1.0 - estimator.predict_survival(X, get_time(y)),  # use failure
-        weights=np.full(len(y), 1.0),
-    )
-    return r if return_all else r[0]
-    
+# TODO export classification based metrics

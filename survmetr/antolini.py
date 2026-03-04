@@ -98,7 +98,6 @@ def c_index_antolini_sksurv(est, y, return_all=False):
     )
     return r if return_all else r['c-index']
  
-
 # pycox implementation
 from .antolini_pycox import concordance_td as pycox_antolini
 def c_index_antolini_pycox(est_sq, y, method: Literal['adj_antolini', 'antolini'] = 'antolini', return_all=False):

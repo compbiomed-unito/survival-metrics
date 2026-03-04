@@ -1,12 +1,13 @@
 # derive survival scores from classification scores and a time grid
-import numpy
-from .util import split_y
-
+import numpy as np
+#from .util import split_y
+from sksurv.util import check_y_survival
+from sklearn.metrics import roc_auc_score, brier_score_loss, log_loss
 
 def make_survival_scorer(
     score_func,
     needs="failure",
-    classification=False,
+    classification=True,
     aggregate="mean",
     time_mode="events",
     time_values=None,
@@ -65,14 +66,15 @@ def make_survival_scorer(
     """
 
     def scorer(estimator, X, y):
-        indicator, times = split_y(y)
-        event_times = times[indicator]
+
+        y_indicator, y_times = check_y_survival(y)
+        event_times = y_times[y_indicator]
 
         # get evaluation times
         if time_mode == "events":
             pred_times = event_times
         elif time_mode == "quantiles":
-            pred_times = numpy.quantile(event_times, time_values)
+            pred_times = np.quantile(event_times, time_values)
         elif time_mode == "absolute":
             pred_times = time_values
         else:  # keep as is, must be a scalar or sequence
@@ -90,24 +92,22 @@ def make_survival_scorer(
         scores = []
         for p, t in zip(y_pred.T, pred_times):
             if classification:
-                y_ind, y_time = split_y(y)
+                informative = (y_times > t) | y_indicator
+                positive = (y_times <= t) & y_indicator
 
-                informative = (y_time > t) | y_ind
-                positive = (y_time <= t) & y_ind
-
-                score = score_func(positive[informative], p[informative])
+                score = score_func(positive[informative], p[informative], **kwargs)
             else:
-                score = score_func(y, p)
+                score = score_func(y, p, **kwargs)
             if score != score:
                 print(f"bad survival score at time {t} computed by {score_func}")
             scores.append(score)
 
         # aggregate scores for different times
         if aggregate == "no":
-            return numpy.array(scores)
+            return np.array(scores)
         else:
-            if hasattr(numpy, aggregate):
-                return getattr(numpy, aggregate)(scores)
+            if hasattr(np, aggregate):
+                return getattr(np, aggregate)(scores)
             else:
                 raise ValueError(f"unknonw aggregate value `{aggregate}`")
 
@@ -115,34 +115,30 @@ def make_survival_scorer(
 
     return scorer
 
-def _create_default_scorers():
+def _create_default_classification_scorers():
     """
     Create scorers for common survival metrics.
     """
 
     quantiles = {
-        "quartiles": numpy.linspace(0, 1, 4 + 1)[1:-1],
-        "deciles": numpy.linspace(0, 1, 10 + 1)[1:-1],
+        "quartiles": np.linspace(0, 1, 4 + 1)[1:-1],
+        "deciles": np.linspace(0, 1, 10 + 1)[1:-1],
         # "percentiles": numpy.linspace(0, 1, 100 + 1)[1:-1],
     }
     classification_metrics = {
         "roc-auc": roc_auc_score,
-        "neg-brier": lambda *args: -brier_score_loss(*args),
-        "neg-log": lambda *args: -log_loss(*args),
+        "brier-loss": brier_score_loss,
+        "log-loss": log_loss,
+        #"neg-brier": lambda *args: -brier_score_loss(*args),
+        #"neg-log": lambda *args: -log_loss(*args),
     }
 
-    # TODO move these to antolini.py or to __init__.py, keep only classification scores here
-    scorers = {
-        "c-index-antolini": concordance_index_antolini_scorer,
-        "c-index-antolini-vec": AntoliniCIndexVecScorer(),
-    }
-
+    # FIXME remove or move this
     if False: # these should not be used, but maybe give option to have them
         scorers.update(
             {
                 f"c-index-{quantile_name}": make_survival_scorer(
                     concordance_index_score,
-                    classification=False,
                     time_mode="quantiles",
                     time_values=quantile_breaks,
                 )  # FIXME this is not a good score, maybe remove it from this list
@@ -150,8 +146,7 @@ def _create_default_scorers():
             }
         )
 
-    scorers.update(
-        {
+    return {
             f"{score_name}-{quantile_name}": make_survival_scorer(
                 score_func,
                 classification=True,
@@ -161,6 +156,3 @@ def _create_default_scorers():
             for score_name, score_func in classification_metrics.items()
             for quantile_name, quantile_breaks in quantiles.items()
         }
-    )
-
-    return scorers
