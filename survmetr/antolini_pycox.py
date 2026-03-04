@@ -1,11 +1,23 @@
 try:
     import numba
 except ModuleNotFoundError:
-    # FIXME this is not working
-    class numba:
-        def jit(f, nopython):
-            return f
+    class _NumbaFallback:
+        @staticmethod
+        def jit(*args, **kwargs):
+            def decorator(f):
+                return f
+            if len(args) == 1 and callable(args[0]):
+                return args[0]
+            return decorator
+
+        @staticmethod
+        def prange(n):
+            return range(n)
+
+    numba = _NumbaFallback()
 import numpy
+
+__all__ = ['concordance_td']
 
 @numba.jit(nopython=True)
 def _is_comparable(t_i, t_j, d_i, d_j):
@@ -93,15 +105,20 @@ def concordance_td(durations, events, surv, surv_idx, method='adj_antolini'):
     """
     if numpy.isfortran(surv):
         surv = numpy.array(surv, order='C')
-    assert durations.shape[0] == surv.shape[1] == surv_idx.shape[0] == events.shape[0]
-    assert type(durations) is type(events) is type(surv) is type(surv_idx) is numpy.ndarray
+    n = durations.shape[0]
+    if not (n == surv.shape[1] == surv_idx.shape[0] == events.shape[0]):
+        raise ValueError(
+            f"Shape mismatch: durations ({n}), surv ({surv.shape[1]}), "
+            f"surv_idx ({surv_idx.shape[0]}), events ({events.shape[0]}) must all match"
+        )
+    for name, arr in [('durations', durations), ('events', events), ('surv', surv), ('surv_idx', surv_idx)]:
+        if not isinstance(arr, numpy.ndarray):
+            raise TypeError(f"'{name}' must be a numpy.ndarray, got {type(arr).__name__}")
     if events.dtype in ('float', 'float32'):
         events = events.astype('int32')
     if method == 'adj_antolini':
         is_concordant = _is_concordant
         is_comparable = _is_comparable
-    #    return (_sum_concordant_disc(surv, durations, events, surv_idx, is_concordant) /
-    #            _sum_comparable(durations, events, is_comparable))
     elif method == 'antolini':
         is_concordant = _is_concordant_antolini
         is_comparable = _is_comparable_antolini
@@ -113,8 +130,11 @@ def concordance_td(durations, events, surv, surv_idx, method='adj_antolini'):
     cindex = numerator / denominator 
 
     return {
-        'c-index': cindex,
-        'numerator': numerator,
+        'c_index': cindex,
+        'concordant': float('nan'),
         'comparable': denominator,
+        'tied_risk': float('nan'),
+        'discordant': float('nan'),
+        'numerator': numerator,
     }
             

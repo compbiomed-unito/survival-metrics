@@ -13,7 +13,13 @@ flit build           # Build the package
 pip install -e .     # Development install
 ```
 
-Build system: Flit. Python 3.8+. Dependencies: numpy, scikit-learn, scikit-survival. Optional: numba (for JIT-accelerated PyCox implementation).
+Build system: Flit. Python 3.11+. Dependencies: numpy, scikit-learn, scikit-survival. Optional: numba (for JIT-accelerated PyCox implementation).
+
+## Testing
+
+```bash
+pytest tests/ -v
+```
 
 ## Architecture
 
@@ -35,4 +41,4 @@ The package provides three independent implementations of Antolini's C-index plu
 
 ## Current State
 
-Early research stage (v0.1.0). No formal test suite yet. Classification metrics not yet exported from `__init__.py`. See README.md TODO for planned work (flexible outcome passing, model API standardization, IPCW metrics, tutorial).
+Alpha release (v0.1.0). Test suite in `tests/`. All public API symbols exported from `__init__.py`. CI via GitHub Actions. See README.md TODO for planned work (flexible outcome passing, model API standardization, IPCW metrics, tutorial).

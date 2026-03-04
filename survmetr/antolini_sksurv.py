@@ -2,6 +2,8 @@ import numpy as np
 from sksurv.metrics import _iter_comparable
 from sksurv.exceptions import NoComparablePairException
 
+__all__ = ['_estimate_concordance_index_antolini']
+
 def _estimate_concordance_index_antolini(
     event_indicator, event_time, estimate, weights, tied_tol=1e-8
 ):
@@ -27,9 +29,8 @@ def _estimate_concordance_index_antolini(
 
         est = estimate[order[mask], order[ind]]
 
-        assert (
-            event_i
-        ), f"got censored sample at index {order[ind]}, but expected uncensored"
+        if not event_i:
+            raise ValueError(f"got censored sample at index {order[ind]}, but expected uncensored")
 
         ties = np.absolute(est - est_i) <= tied_tol
         n_ties = ties.sum()
@@ -51,7 +52,7 @@ def _estimate_concordance_index_antolini(
 
     cindex = numerator / denominator
     return {
-        'c-index': cindex,
+        'c_index': cindex,
         'concordant': concordant, 
         'discordant': discordant, 
         'tied_risk': tied_risk, 

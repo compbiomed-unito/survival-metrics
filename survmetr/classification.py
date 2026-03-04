@@ -1,8 +1,9 @@
 # derive survival scores from classification scores and a time grid
 import numpy as np
-#from .util import split_y
 from sksurv.util import check_y_survival
 from sklearn.metrics import roc_auc_score, brier_score_loss, log_loss
+
+__all__ = ['make_survival_scorer']
 
 def make_survival_scorer(
     score_func,
@@ -98,8 +99,9 @@ def make_survival_scorer(
                 score = score_func(positive[informative], p[informative], **kwargs)
             else:
                 score = score_func(y, p, **kwargs)
-            if score != score:
-                print(f"bad survival score at time {t} computed by {score_func}")
+            if np.isnan(score):
+                import warnings
+                warnings.warn(f"NaN survival score at time {t} computed by {score_func}")
             scores.append(score)
 
         # aggregate scores for different times
@@ -123,28 +125,12 @@ def _create_default_classification_scorers():
     quantiles = {
         "quartiles": np.linspace(0, 1, 4 + 1)[1:-1],
         "deciles": np.linspace(0, 1, 10 + 1)[1:-1],
-        # "percentiles": numpy.linspace(0, 1, 100 + 1)[1:-1],
     }
     classification_metrics = {
         "roc-auc": roc_auc_score,
         "brier-loss": brier_score_loss,
         "log-loss": log_loss,
-        #"neg-brier": lambda *args: -brier_score_loss(*args),
-        #"neg-log": lambda *args: -log_loss(*args),
     }
-
-    # FIXME remove or move this
-    if False: # these should not be used, but maybe give option to have them
-        scorers.update(
-            {
-                f"c-index-{quantile_name}": make_survival_scorer(
-                    concordance_index_score,
-                    time_mode="quantiles",
-                    time_values=quantile_breaks,
-                )  # FIXME this is not a good score, maybe remove it from this list
-                for quantile_name, quantile_breaks in quantiles.items()
-            }
-        )
 
     return {
             f"{score_name}-{quantile_name}": make_survival_scorer(

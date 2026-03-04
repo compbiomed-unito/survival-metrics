@@ -7,13 +7,26 @@ name = "survmetr"
 version = "0.1.0"
 description = "Advanced predictive metrics for survival analysis"
 readme = "README.md"
-requires-python = ">=3.8"
-authors = [{ name="Your Name" }]
+requires-python = ">=3.11"
+license = "GPL-3.0-or-later"
+authors = [{ name="PLACEHOLDER", email="placeholder@example.com" }]
+keywords = ["survival analysis", "concordance index", "antolini", "c-index", "time-dependent"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Medical Science Apps.",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
 dependencies = [
-  "numpy>=2.0.2",
-  "scikit-learn>=1.5.2",
-  "scikit-survival>=0.23.1"
+    "numpy>=2.0.2",
+    "scikit-learn>=1.5.2",
+    "scikit-survival>=0.23.1",
 ]
 
-[tool.setuptools.packages.find]
-where = ["."]
+[project.optional-dependencies]
+numba = ["numba"]
+
+[project.urls]
+Repository = "https://github.com/compbiomed-unito/survival-metrics"
