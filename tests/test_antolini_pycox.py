@@ -15,7 +15,7 @@ class TestCIndexAntoliniPycox:
         d = synthetic_survival_data
         result = c_index_antolini_pycox(d['surv_func_pycox'], d['y'], return_all=True)
         assert isinstance(result, dict)
-        assert 'c_index' in result
+        assert 'c-index' in result
         assert 'concordant' in result
         assert 'comparable' in result
         assert 'numerator' in result

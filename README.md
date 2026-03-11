@@ -72,3 +72,4 @@ This project is licensed under the GNU General Public License v3.0 - see the [LI
 - Write a tutorial notebook
 - IPCW metrics
 - Handle competing risks
+- Move consistency checks between antolini implementations to a notebook (they are not consistent, we want to show it, not require it in a test)

@@ -29,8 +29,9 @@ def _estimate_concordance_index_antolini(
 
         est = estimate[order[mask], order[ind]]
 
-        if not event_i:
-            raise ValueError(f"got censored sample at index {order[ind]}, but expected uncensored")
+        assert (
+            event_i
+        ), f"got censored sample at index {order[ind]}, but expected uncensored"
 
         ties = np.absolute(est - est_i) <= tied_tol
         n_ties = ties.sum()
@@ -52,7 +53,7 @@ def _estimate_concordance_index_antolini(
 
     cindex = numerator / denominator
     return {
-        'c_index': cindex,
+        'c-index': cindex,
         'concordant': concordant, 
         'discordant': discordant, 
         'tied_risk': tied_risk, 

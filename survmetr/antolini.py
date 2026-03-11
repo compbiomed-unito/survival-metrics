@@ -51,12 +51,12 @@ def c_index_antolini_vector(estimate, y, time_ties: Literal['none', 'censored', 
     else:
         raise ValueError(f"Invalid time_ties '{time_ties}'")
 
-    if risk_sets.shape != estimate.shape:
-        raise ValueError(f"risk_sets shape {risk_sets.shape} does not match estimate shape {estimate.shape}")
+    assert risk_sets.shape == estimate.shape, f'{risk_sets.shape=} != {estimate.shape=}'
 
     # compute concordant pairs
     diag_events = estimate[*self_idx]
-    concordant = risk_sets * (estimate < diag_events)
+    assert all(diag_events == np.diag(estimate[event]))
+    concordant = risk_sets * (estimate > diag_events)
     ties = risk_sets * (estimate == diag_events)
 
     n_comparable = int(risk_sets.sum())
@@ -71,7 +71,7 @@ def c_index_antolini_vector(estimate, y, time_ties: Literal['none', 'censored', 
 
     if return_all:
         return {
-            'c_index': c_index,
+            'c-index': c_index,
             'concordant': n_concordant,
             'comparable': n_comparable,
             'tied_risk': n_ties,
@@ -102,7 +102,7 @@ def c_index_antolini_sksurv(estimate, y, return_all=False) -> Union[float, dict]
         weights=np.full(len(y), 1.0),
         tied_tol=0.0,
     )
-    return r if return_all else r['c_index']
+    return r if return_all else r['c-index']
  
 # pycox implementation
 from .antolini_pycox import concordance_td as pycox_antolini
@@ -110,5 +110,5 @@ def c_index_antolini_pycox(estimate, y, method: Literal['adj_antolini', 'antolin
     ind, time = split_y(y)
     indexes = np.arange(estimate.shape[0])
     r = pycox_antolini(time, ind, estimate.T, indexes, method=method)
-    return r if return_all else r['c_index']
+    return r if return_all else r['c-index']
 

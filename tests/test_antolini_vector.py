@@ -15,7 +15,7 @@ class TestCIndexAntoliniVector:
         d = synthetic_survival_data
         result = c_index_antolini_vector(d['failure_probs'], d['y'], return_all=True)
         assert isinstance(result, dict)
-        expected_keys = {'c_index', 'concordant', 'comparable', 'tied_risk', 'discordant', 'numerator'}
+        expected_keys = {'c-index', 'concordant', 'comparable', 'tied_risk', 'discordant', 'numerator'}
         assert set(result.keys()) == expected_keys
 
     @pytest.mark.parametrize("time_ties", ['none', 'censored', 'all'])
@@ -31,7 +31,7 @@ class TestCIndexAntoliniVector:
         r2 = c_index_antolini_vector(d['failure_probs'], d['y'], tie_weight=1.0, return_all=True)
         # With different tie weights, the numerator should differ (if there are ties)
         if r1['tied_risk'] > 0:
-            assert r1['c_index'] != r2['c_index']
+            assert r1['c-index'] != r2['c-index']
 
     def test_all_nan_raises(self, synthetic_survival_data):
         d = synthetic_survival_data

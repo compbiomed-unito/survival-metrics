@@ -18,7 +18,7 @@ class TestCIndexAntoliniSksurv:
         surv_probs = 1.0 - d['failure_probs_full']
         result = c_index_antolini_sksurv(surv_probs, d['y'], return_all=True)
         assert isinstance(result, dict)
-        assert 'c_index' in result
+        assert 'c-index' in result
         assert 'concordant' in result
         assert 'comparable' in result
         assert 'tied_risk' in result
@@ -29,5 +29,5 @@ class TestCIndexAntoliniSksurv:
         d = synthetic_survival_data
         surv_probs = 1.0 - d['failure_probs_full']
         result = c_index_antolini_sksurv(surv_probs, d['y'], return_all=True)
-        vector_keys = {'c_index', 'concordant', 'comparable', 'tied_risk', 'discordant', 'numerator'}
+        vector_keys = {'c-index', 'concordant', 'comparable', 'tied_risk', 'discordant', 'numerator'}
         assert vector_keys.issubset(set(result.keys()))
