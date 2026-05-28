@@ -1,5 +1,5 @@
 [build-system]
-requires = ["flit_core >=3.2,<4"]
+requires = ["flit_core >=3.11,<4"]
 build-backend = "flit_core.buildapi"
 
 [project]
@@ -8,14 +8,16 @@ version = "0.1.0"
 description = "Advanced predictive metrics for survival analysis"
 readme = "README.md"
 requires-python = ">=3.11"
-license = "GPL-3.0-or-later"
-authors = [{ name="PLACEHOLDER", email="placeholder@example.com" }]
+license = "LGPL-3.0-or-later"
+authors = [{ name="Giovanni Birolo", email="giovanni.birolo@unito.it" }]
 keywords = ["survival analysis", "concordance index", "antolini", "c-index", "time-dependent"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Science/Research",
+    "Operating System :: OS Independent",
     "Topic :: Scientific/Engineering :: Medical Science Apps.",
     "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
 ]
@@ -29,4 +31,6 @@ dependencies = [
 numba = ["numba"]
 
 [project.urls]
+Homepage = "https://github.com/compbiomed-unito/survival-metrics"
 Repository = "https://github.com/compbiomed-unito/survival-metrics"
+Issues = "https://github.com/compbiomed-unito/survival-metrics/issues"

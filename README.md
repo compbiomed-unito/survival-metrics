@@ -1,6 +1,6 @@
 # survmetr
 
-[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![License: LGPL v3](https://img.shields.io/badge/License-LGPLv3-blue.svg)](https://www.gnu.org/licenses/lgpl-3.0)
 
 Advanced predictive metrics for survival analysis, focused on Antolini's time-dependent concordance index.
 
@@ -40,7 +40,7 @@ print(f"C-index: {c:.3f}")
 # Get detailed statistics
 result = c_index_antolini(estimate, y, return_all=True)
 print(result)
-# {'c_index': ..., 'concordant': ..., 'comparable': ...,
+# {'c-index': ..., 'concordant': ..., 'comparable': ...,
 #  'tied_risk': ..., 'discordant': ..., 'numerator': ...}
 ```
 
@@ -63,13 +63,4 @@ See [Tutorial.ipynb](Tutorial.ipynb) for a detailed walkthrough.
 
 ## License
 
-This project is licensed under the GNU General Public License v3.0 - see the [LICENSE](LICENSE) file for details.
-
-## TODO
-
-- Try to be flexible in how outcomes are passed: two arrays, one structured (with arbitrary names?)
-- Assume a certain API for models in sklearn-style scorers? like predict('failure', X, times)?
-- Write a tutorial notebook
-- IPCW metrics
-- Handle competing risks
-- Move consistency checks between antolini implementations to a notebook (they are not consistent, we want to show it, not require it in a test)
+This project is licensed under the GNU Lesser General Public License v3.0 - see the [LICENSE](LICENSE) file for details.
