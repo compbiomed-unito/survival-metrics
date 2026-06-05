@@ -84,7 +84,7 @@ def c_index_antolini_vector(estimate, y, time_ties: Literal['none', 'censored', 
 
 @dataclass
 class AntoliniCIndexVecScorer:
-    time_ties: str = 'none'
+    time_ties: Literal['none', 'censored', 'all'] = 'none'
 
     def __call__(self, model, X, y, return_all=False):
         est = model.predict('survival', X, y['time'][y['event']])
