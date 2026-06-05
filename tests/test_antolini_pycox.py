@@ -1,6 +1,6 @@
 import numpy as np
 import pytest
-from survmetr import c_index_antolini_pycox
+from survmetr.antolini import c_index_antolini_pycox
 
 
 class TestCIndexAntoliniPycox:

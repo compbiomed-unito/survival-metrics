@@ -5,13 +5,10 @@ import survmetr
 class TestPublicAPI:
 
     EXPECTED_EXPORTS = [
-        'c_index_antolini',
-        'c_index_antolini_vector',
-        'c_index_antolini_sksurv',
-        'c_index_antolini_pycox',
         'AntoliniCIndexVecScorer',
         'harrel_c_index_scorer',
         'make_survival_scorer',
+        'default_scorers',
         'split_y',
     ]
 
@@ -21,6 +18,3 @@ class TestPublicAPI:
 
     def test_all_matches_exports(self):
         assert set(survmetr.__all__) == set(self.EXPECTED_EXPORTS)
-
-    def test_antolini_is_vector(self):
-        assert survmetr.c_index_antolini is survmetr.c_index_antolini_vector

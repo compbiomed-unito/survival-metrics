@@ -1,6 +1,6 @@
 import numpy as np
 import pytest
-from survmetr import c_index_antolini_sksurv
+from survmetr.antolini import c_index_antolini_sksurv
 
 
 class TestCIndexAntoliniSksurv:
