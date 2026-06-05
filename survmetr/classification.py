@@ -128,8 +128,8 @@ def _create_default_classification_scorers():
     }
     classification_metrics = {
         "roc-auc": roc_auc_score,
-        "brier-loss": brier_score_loss,
-        "log-loss": log_loss,
+        "neg-brier": lambda *args: -brier_score_loss(*args),
+        "neg-log": lambda *args: -log_loss(*args),
     }
 
     return {

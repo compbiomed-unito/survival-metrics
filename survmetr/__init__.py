@@ -6,8 +6,7 @@ from .others import harrel_c_index_scorer
 from .util import split_y
 
 default_scorers = {
-    'c_index_antolini': AntoliniCIndexVecScorer(),
-    
+    'c-index-antolini': AntoliniCIndexVecScorer(),
 }
 default_scorers.update(_create_default_classification_scorers())
 
